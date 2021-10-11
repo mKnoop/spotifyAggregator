@@ -1,0 +1,34 @@
+version: '3'
+services:
+  php:
+    build:
+      target: php-apache
+      dockerfile: Dockerfile
+      context: .
+    container_name: app_php
+    ports:
+      - "8080:80"
+    volumes:
+      - "app__db_cache:/var/lib/postgresql/data"
+      - ./:/var/www/html:delegated
+    networks:
+      - app_local
+  db:
+    image: postgres:latest
+    container_name: packagist_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: db
+    volumes_from:
+      - php
+    networks:
+      - app_local
+volumes:
+  app__db_cache:
+    driver: local
+networks:
+  app_local:
+    driver: bridge
