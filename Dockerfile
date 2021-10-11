@@ -1,7 +1,7 @@
 #-----------------------------
 # App: PHP-FPM base image
 #-----------------------------
-FROM php:8-apache as php-apache
+FROM php:8-fpm as php8-fpm
 
 # Install and configure PHP-FPM basic image dependencies
 RUN apt-get update && \
@@ -14,10 +14,14 @@ RUN apt-get update && \
     docker-php-ext-install pdo_pgsql && \
     docker-php-ext-configure opcache && \
     docker-php-ext-install opcache && \
-    wget https://getcomposer.org/download/latest-stable/composer.phar && \
-    mv composer.phar /bin/composer && \
+    curl -sS https://get.symfony.com/cli/installer | bash && \
+    mv /root/.symfony/bin/symfony /usr/local/bin/symfony && \
     npm install --global yarn
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 VOLUME /var/www/html
 
 EXPOSE 80 443 9000
+
+CMD symfony server:start --port=80
