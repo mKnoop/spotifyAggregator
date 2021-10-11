@@ -2,7 +2,7 @@ version: '3'
 services:
   php:
     build:
-      target: php-apache
+      target: php8-fpm
       dockerfile: Dockerfile
       context: .
     container_name: app_php
@@ -15,7 +15,7 @@ services:
       - app_local
   db:
     image: postgres:latest
-    container_name: packagist_postgres
+    container_name: app_postgres
     ports:
       - "5432:5432"
     environment:
